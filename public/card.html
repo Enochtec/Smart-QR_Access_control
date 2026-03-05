@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your QR Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div id="card" class="bg-white p-8 rounded shadow-md w-full max-w-sm text-center">
+    <h1 class="text-xl font-bold mb-2">Your Access Card</h1>
+    <img id="qrImg" src="" alt="QR code" class="mx-auto mb-4" />
+    <p id="name" class="font-medium"></p>
+    <p id="email" class="text-sm text-gray-600"></p>
+    <img id="photo" src="" alt="photo" class="w-24 h-24 rounded-full mt-4 mx-auto hidden" />
+  </div>
+
+  <script>
+    async function loadCard() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) return;
+      const res = await fetch(`/api/users/${id}/card`);
+      if (!res.ok) return alert('Failed to load card');
+      const user = await res.json();
+      document.getElementById('qrImg').src = user.qrData;
+      document.getElementById('name').textContent = user.name;
+      document.getElementById('email').textContent = user.email;
+      if (user.photo) {
+        const img = document.getElementById('photo');
+        img.src = user.photo;
+        img.classList.remove('hidden');
+      }
+    }
+    loadCard();
+  </script>
+</body>
+</html>
